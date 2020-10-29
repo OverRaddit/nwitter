@@ -1,4 +1,4 @@
-import { dbService } from "fbase";
+import { dbService, storageService } from "fbase";
 import React, { useState } from "react";
 
 const Nweet = ({ nweetObj, isOwner }) => {
@@ -10,6 +10,7 @@ const Nweet = ({ nweetObj, isOwner }) => {
         if(ok){
             // doc 파라미터가 왜 "가 아닌 `를 쓰는지? $는 뭔지?
             await dbService.doc(`nweets/${nweetObj.id}`).delete();
+            await storageService.refFromURL(nweetObj.attachmentUrl).delete();
         }
     }
     const toggleEditing = () => setEditing(prev => !prev);
@@ -50,6 +51,10 @@ const Nweet = ({ nweetObj, isOwner }) => {
                 ) : (
             <>
                 <h4>{nweetObj.text}</h4>
+                {nweetObj.attachmentUrl && (
+                    <img src={nweetObj.attachmentUrl} width="50px" height="50px" />
+                )}
+
                 {isOwner && (
                 <>
                     <button onClick={onDeleteClick}>Delete Nweet</button>
